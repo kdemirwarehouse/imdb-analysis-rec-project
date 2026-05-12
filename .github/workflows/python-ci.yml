@@ -1,0 +1,140 @@
+name: Python CI - IMDb Project
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repoyu indir
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Debug bilgilerini goster
+        run: |
+          echo "Workflow basladi"
+          echo "Calisan sistem bilgisi:"
+          uname -a
+          echo "Bulunulan klasor:"
+          pwd
+          echo "Proje dosyalari:"
+          find . -maxdepth 3 -type f
+
+      - name: Paketleri yukle
+        run: |
+          echo "pip guncelleniyor..."
+          python -m pip install --upgrade pip
+
+          echo "requirements.txt kontrol ediliyor..."
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            echo "requirements.txt bulunamadi, paket kurulumu atlandi."
+          fi
+
+          echo "Test icin pytest yukleniyor..."
+          pip install pytest
+
+      - name: Python ve paket kontrolu
+        run: |
+          echo "Python versiyonu:"
+          python --version
+
+          echo "Kurulu paketler:"
+          pip list
+
+      - name: README kontrolu yap
+        run: |
+          echo "README.md kontrol ediliyor..."
+
+          if [ ! -f README.md ]; then
+            echo "README.md dosyasi bulunamadi."
+            exit 1
+          fi
+
+          if [ ! -s README.md ]; then
+            echo "README.md dosyasi bos."
+            exit 1
+          fi
+
+          echo "README.md var ve bos degil."
+
+      - name: Syntax kontrolu yap
+        run: |
+          echo "Python dosyalarinda syntax hatasi var mi kontrol ediliyor..."
+          python -m compileall .
+
+      - name: Kodlari test et
+        run: |
+          echo "Test dosyalari kontrol ediliyor..."
+
+          if [ -d tests ]; then
+            echo "tests klasoru bulundu. Pytest calistiriliyor..."
+            pytest -q
+          else
+            echo "tests klasoru bulunamadi. Test adimi atlandi."
+          fi
+
+      - name: Proje dosyalarini calistirabilme kontrolu
+        run: |
+          echo "Ana proje dosyasi aranıyor..."
+
+          if [ -f main.py ]; then
+            echo "main.py bulundu, calistiriliyor..."
+            python main.py
+
+          elif [ -f app.py ]; then
+            echo "app.py bulundu, calistiriliyor..."
+            python app.py
+
+          elif [ -f config.py ]; then
+            echo "config.py bulundu, calistiriliyor..."
+            python config.py
+
+          else
+            echo "main.py, app.py veya config.py bulunamadi. Bu adim atlandi."
+          fi
+
+      - name: Model calistirma kontrolu
+        run: |
+          echo "Model dosyasi aranıyor..."
+
+          if [ -f model.py ]; then
+            echo "model.py bulundu, calistiriliyor..."
+            python model.py
+
+          elif [ -f train.py ]; then
+            echo "train.py bulundu, calistiriliyor..."
+            python train.py
+
+          elif [ -f src/model.py ]; then
+            echo "src/model.py bulundu, calistiriliyor..."
+            python src/model.py
+
+          elif [ -f src/train.py ]; then
+            echo "src/train.py bulundu, calistiriliyor..."
+            python src/train.py
+
+          else
+            echo "Model dosyasi bulunamadi. Bu adim atlandi."
+          fi
+
+      - name: Workflow tamamlandi
+        run: |
+          echo "Tum kontroller tamamlandi."

@@ -81,20 +81,6 @@ Expected output:
 
 ---
 
-## 🗺️ Roadmap
-
-- [x] **Step 1** — Environment & configuration
-- [ ] **Step 2** — IMDB download + TMDB enrichment
-- [ ] **Step 3** — Cleaning & weighted-rating feature
-- [ ] **Step 4** — General EDA
-- [ ] **Step 5** — Country-level analysis
-- [ ] **Step 6** — Genre / time-series analysis
-- [ ] **Step 7** — Content-based recommender (TF-IDF + cosine)
-- [ ] **Step 8** — Collaborative filtering (SVD)
-- [ ] **Step 9** — Hybrid engine
-- [ ] **Step 10** — Streamlit dashboard
-
----
 
 ## 📚 Data Sources
 
